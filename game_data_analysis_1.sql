@@ -105,3 +105,28 @@ ALTER TABLE dbo.game_data
 DROP COLUMN metacritic_url;
 
 SELECT TOP 10 * FROM dbo.game_data;
+
+-- GAMERS WITH HIGH RATINGS PLAYS WHICH GAMES.
+WITH high_gamers_cte AS (
+	SELECT d.name, r.user_id, r.rating
+	FROM dbo.game_data d
+	LEFT JOIN dbo.game_ratings r ON d.game_id = r.game_id
+	WHERE r.rating > 4
+)
+SELECT DISTINCT TOP 10 name
+FROM high_gamers_cte
+
+-- MOST RATED GAMES.
+SELECT name, ROUND(rating, 0) AS rating
+FROM dbo.game_data
+WHERE ROUND(rating, 0) >= 5
+GROUP BY name, ROUND(rating, 0)
+ORDER BY rating DESC;
+-- OBSERVATION: HIGHLY RATED GAME IS CYBERPUNK.
+
+-- GAMES RELEASED AFTER YEAR 2022.
+SELECT YEAR(released) AS release_year, name
+FROM dbo.game_data
+WHERE YEAR(released) > 2021
+GROUP BY YEAR(released), name
+ORDER BY release_year DESC;
